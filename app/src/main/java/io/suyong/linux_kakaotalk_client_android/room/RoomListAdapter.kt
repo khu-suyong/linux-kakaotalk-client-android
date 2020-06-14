@@ -1,18 +1,22 @@
 package io.suyong.linux_kakaotalk_client_android.room
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import io.suyong.linux_kakaotalk_client_android.ChatActivity
 import io.suyong.linux_kakaotalk_client_android.R
 import kotlinx.android.synthetic.main.room_item.view.*
 
-class RoomListAdapter(val context: Context) : RecyclerView.Adapter<RoomListViewHolder>() {
+class RoomListAdapter(val activity: Activity) : RecyclerView.Adapter<RoomListViewHolder>() {
     var list = mutableListOf<Room>()
 
     override fun getItemId(position: Int): Long {
@@ -24,6 +28,12 @@ class RoomListAdapter(val context: Context) : RecyclerView.Adapter<RoomListViewH
         val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val view = inflater.inflate(R.layout.room_item, parent, false)
+
+        view.setOnClickListener {
+            val intent = Intent(activity, ChatActivity::class.java)
+            intent.extras?.putString("room", "test-room-id")
+            startActivityForResult(activity, intent, ChatActivity.REQUEST_ROOM, null)
+        }
 
         return RoomListViewHolder(view)
     }
@@ -40,7 +50,7 @@ class RoomListAdapter(val context: Context) : RecyclerView.Adapter<RoomListViewH
         holder.badge.text = it.notRead.toString()
 
         try {
-            Glide.with(context).load(Uri.parse(it.url)).into(holder.image)
+            Glide.with(activity).load(Uri.parse(it.url)).into(holder.image)
         } catch (err: Exception) { }
     }
 }
