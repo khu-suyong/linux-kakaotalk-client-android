@@ -9,6 +9,7 @@ import io.suyong.linux_kakaotalk_client_android.message.MessageListAdapter
 import io.suyong.linux_kakaotalk_client_android.network.NetworkManager
 import io.suyong.linux_kakaotalk_client_android.room.Room
 import kotlinx.android.synthetic.main.activity_chat.*
+import java.time.LocalDate
 import java.util.*
 
 class ChatActivity : AppCompatActivity() {
@@ -16,6 +17,8 @@ class ChatActivity : AppCompatActivity() {
         const val REQUEST_ROOM = 0
         var sender = "HI"
     }
+
+    var room = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,15 +29,19 @@ class ChatActivity : AppCompatActivity() {
         chat_list.layoutManager = LinearLayoutManager(this)
 
         chat_send.setOnClickListener {
-            adapter.list.add(Message(if (Math.random() > 0.5) Math.random().toString() else "HI", "Test Text", Date()))
-
-            adapter.notifyDataSetChanged()
+            NetworkManager.emit(
+                "send",
+                mapOf(
+                    "room" to room,
+                    "text" to chat_edit.text.toString()
+                )
+            )
         }
 
         NetworkManager.on("message") {
             val sender = it.get("sender").toString()
             val text = it.get("sender").toString()
-            val time = Date()
+            val time = it.get("date").toString()
 
             runOnUiThread {
                 adapter.list.add(Message(sender, text, time))
@@ -47,7 +54,8 @@ class ChatActivity : AppCompatActivity() {
         when(resultCode) {
             REQUEST_ROOM -> {
                 intent?.let {
-                    supportActionBar?.title = it.extras?.get("room") as String
+                    room = it.extras?.get("room") as String
+                    supportActionBar?.title = room
                 }
             }
         }

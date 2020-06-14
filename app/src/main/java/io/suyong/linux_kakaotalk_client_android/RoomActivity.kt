@@ -23,14 +23,24 @@ class RoomActivity : AppCompatActivity() {
         room_list.layoutManager = LinearLayoutManager(this)
         room_list.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
 
-        fab_connect.setOnClickListener {
-            adapter.list.add(Room("nothing", "test-title ${(Math.random() * 100).toInt()}", "test caption \n${Math.random()}", (Math.random() * 500).toInt()))
-            adapter.notifyDataSetChanged()
-        }
-
         NetworkManager.on("room") {
             runOnUiThread {
                 adapter.list.add(Room("nothing", it.get("title").toString(), "", 0))
+                adapter.notifyDataSetChanged()
+            }
+        }
+
+        NetworkManager.on("message") {
+            runOnUiThread {
+                val room = it.get("room").toString()
+                val text = it.get("text").toString()
+
+                adapter.list.forEachIndexed {i, r ->
+                    if (r.title == room) {
+                        adapter.list[i].caption = text
+                    }
+                }
+
                 adapter.notifyDataSetChanged()
             }
         }
