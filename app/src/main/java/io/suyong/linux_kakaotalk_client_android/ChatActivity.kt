@@ -6,6 +6,8 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.suyong.linux_kakaotalk_client_android.message.Message
 import io.suyong.linux_kakaotalk_client_android.message.MessageListAdapter
+import io.suyong.linux_kakaotalk_client_android.network.NetworkManager
+import io.suyong.linux_kakaotalk_client_android.room.Room
 import kotlinx.android.synthetic.main.activity_chat.*
 import java.util.*
 
@@ -27,6 +29,17 @@ class ChatActivity : AppCompatActivity() {
             adapter.list.add(Message(if (Math.random() > 0.5) Math.random().toString() else "HI", "Test Text", Date()))
 
             adapter.notifyDataSetChanged()
+        }
+
+        NetworkManager.on("message") {
+            val sender = it.get("sender").toString()
+            val text = it.get("sender").toString()
+            val time = Date()
+
+            runOnUiThread {
+                adapter.list.add(Message(sender, text, time))
+                adapter.notifyDataSetChanged()
+            }
         }
     }
 

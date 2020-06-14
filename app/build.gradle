@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "io.suyong.linux_kakaotalk_client_android"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -38,4 +38,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation "androidx.preference:preference-ktx:1.1.0"
 }

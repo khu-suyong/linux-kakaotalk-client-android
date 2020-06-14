@@ -3,4 +3,5 @@
     <string name="connect">Connect</string>
     <string name="server_url">Server URL</string>
     <string name="invalid_format_url">Invalid url</string>
+    <string name="bridge_id">Bridge UUID</string>
 </resources>

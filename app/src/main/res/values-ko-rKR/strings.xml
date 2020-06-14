@@ -4,4 +4,5 @@
     <string name="connect">연결</string>
     <string name="server_url">서버 주소</string>
     <string name="invalid_format_url">올바른 URL이 아닙니다</string>
+    <string name="bridge_id">브릿지 UUID</string>
 </resources>
