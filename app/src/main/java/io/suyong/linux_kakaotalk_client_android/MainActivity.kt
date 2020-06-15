@@ -2,6 +2,7 @@ package io.suyong.linux_kakaotalk_client_android
 
 import android.Manifest
 import android.content.Intent
+import android.net.Network
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -36,6 +37,14 @@ class MainActivity : AppCompatActivity() {
             uuid = preference.getString("uuid", "") ?: ""
         }
 
+        val url = preference.getString("url", "") ?: ""
+        val target = preference.getString("target", "") ?: ""
+        val nickname = preference.getString("nickname", "") ?: ""
+
+        textinput_server.setText(url)
+        textinput_bridge.setText(target)
+        textinput_nickname.setText(nickname)
+
         textinput_server.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -54,8 +63,17 @@ class MainActivity : AppCompatActivity() {
 
         main_connect.setOnClickListener {
             RoomActivity.target_uuid = textinput_bridge.text.toString()
+            ChatActivity.sender = textinput_nickname.text.toString()
 
+            val editor = preference.edit()
+            editor.putString("url", textinput_server.text.toString())
+            editor.putString("target", textinput_bridge.text.toString())
+            editor.putString("nickname", textinput_nickname.text.toString())
+            editor.apply()
+
+            NetworkManager.disconnect()
             NetworkManager.connect(textinput_server.text.toString())
+            Log.d("connect", "call")
 
             startActivity(Intent(this, RoomActivity::class.java))
         }

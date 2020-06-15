@@ -32,14 +32,16 @@ class ChatActivity : AppCompatActivity() {
 
         Log.d("change", "plz")
 
-        val json = JSONObject(FileManager.read("message.json"))
-        val array = json.get(room) as JSONArray
+        val json = JSONObject(FileManager.read("${RoomActivity.target_uuid}-messages.json"))
+        try {
+            val array = json.get(room) as JSONArray
 
-        for (i in 0 until array.length()) {
-            val element = array.get(i) as JSONObject
+            for (i in 0 until array.length()) {
+                val element = array.get(i) as JSONObject
 
-            adapter.list.add(Message(element.get("sender").toString(), element.get("text").toString(), ""))
-        }
+                adapter.list.add(Message(element.get("sender").toString(), element.get("text").toString(), ""))
+            }
+        } catch (error: Exception) {}
 
         chat_list.adapter = adapter
         chat_list.layoutManager = LinearLayoutManager(this)
@@ -59,23 +61,32 @@ class ChatActivity : AppCompatActivity() {
             params.put("sender", sender)
             params.put("text", text)
 
-            FileManager.save("message.json", room, params)
-            FileManager.save("room.json", room, text, true)
+            FileManager.save("${RoomActivity.target_uuid}-messages.json", room, params)
+            FileManager.save("${RoomActivity.target_uuid}-rooms.json", room, text, true)
 
             adapter.list.add(Message(sender, text, ""))
             chat_edit.setText("")
+
+            adapter.notifyDataSetChanged()
         }
 
         adapter.notifyDataSetChanged()
 
         NetworkManager.on("message") {
             val sender = it.get("sender").toString()
-            val text = it.get("sender").toString()
+            val text = it.get("text").toString()
             val time = it.get("date").toString()
+            val room = it.get("room").toString()
 
             runOnUiThread {
                 adapter.list.add(Message(sender, text, time))
                 adapter.notifyDataSetChanged()
+
+                val params = JSONObject()
+                params.put("sender", sender)
+                params.put("text", text)
+
+                FileManager.save("${RoomActivity.target_uuid}-messages.json", room, params)
             }
         }
     }

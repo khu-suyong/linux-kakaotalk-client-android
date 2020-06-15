@@ -53,7 +53,7 @@ class RoomListAdapter(val activity: Activity) : RecyclerView.Adapter<RoomListVie
         holder.badge.text = it.notRead.toString()
 
         try {
-            Glide.with(activity).load(Uri.parse(it.url)).into(holder.image)
+            // Glide.with(activity).load(Uri.parse(it.url)).into(holder.image)
         } catch (err: Exception) { }
     }
 }

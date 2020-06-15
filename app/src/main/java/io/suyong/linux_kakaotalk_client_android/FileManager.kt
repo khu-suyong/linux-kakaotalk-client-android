@@ -17,16 +17,20 @@ object FileManager {
         ROOT_PATH = context.filesDir?.absolutePath.toString()
     }
 
-    fun create(path: String) {
+    fun create(path: String, force: Boolean = false) {
         val file = File("$ROOT_PATH/$path")
+
+        if (force && file.exists()) {
+            file.delete()
+        }
 
         if (!file.exists()) {
             try {
                 val writer = BufferedWriter(FileWriter(file))
                 writer.write("{}")
                 writer.close()
-            } catch (err: IOException) {
-                err.printStackTrace()
+            } catch (error: Exception) {
+                error.printStackTrace()
             }
         }
     }
@@ -37,9 +41,7 @@ object FileManager {
         try {
             val reader = BufferedReader(FileReader(File("$ROOT_PATH/$path")))
 
-            var text = reader.readText()
-            if (text == "") text = "{}"
-
+            val text = reader.readText()
             val json = JSONObject(text)
 
             if (!force) {
@@ -62,10 +64,10 @@ object FileManager {
 
             reader.close()
             writer.close()
-        } catch (err: IOException) {
-            err.printStackTrace()
-        } catch (e: JSONException) {
-            e.printStackTrace()
+        } catch (error: Exception) {
+            error.printStackTrace()
+
+            create(path, true)
         }
     }
 
@@ -75,9 +77,7 @@ object FileManager {
         try {
             val reader = BufferedReader(FileReader(File("$ROOT_PATH/$path")))
 
-            var text = reader.readText()
-            if (text == "") text = "{}"
-
+            val text = reader.readText()
             val json = JSONObject(text)
 
             json.remove(key)
@@ -87,10 +87,10 @@ object FileManager {
 
             reader.close()
             writer.close()
-        } catch (err: IOException) {
-            err.printStackTrace()
-        } catch (e: JSONException) {
-            e.printStackTrace()
+        } catch (error: Exception) {
+            error.printStackTrace()
+
+            create(path, true)
         }
     }
 
@@ -102,9 +102,7 @@ object FileManager {
         try {
             val reader = BufferedReader(FileReader(File("$ROOT_PATH/$path")))
 
-            var text = reader.readText()
-            if (text == "") text = "{}"
-
+            val text = reader.readText()
             val json = JSONObject(text)
 
             if (key == "") {
@@ -114,11 +112,10 @@ object FileManager {
             }
 
             reader.close()
-        } catch (error: IOException) {
-            error.printStackTrace()
-        } catch (error: JSONException) {
+        } catch (error: Exception) {
             error.printStackTrace()
 
+            create(path, true)
         }
 
         return result

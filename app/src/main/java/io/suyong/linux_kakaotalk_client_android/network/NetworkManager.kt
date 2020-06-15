@@ -3,10 +3,8 @@ package io.suyong.linux_kakaotalk_client_android.network
 import android.util.Log
 import io.socket.client.IO
 import io.socket.client.Socket
-import io.suyong.linux_kakaotalk_client_android.FileManager
 import io.suyong.linux_kakaotalk_client_android.MainActivity
 import io.suyong.linux_kakaotalk_client_android.RoomActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
 
 object NetworkManager {
@@ -16,6 +14,7 @@ object NetworkManager {
     private var map = HashMap<String, MutableList<(JSONObject) -> Unit>>()
 
     fun connect(url: String? = null) {
+        Log.d("connect", "run")
         this.url = url ?: this.url
 
         try {
@@ -27,18 +26,17 @@ object NetworkManager {
     }
 
     fun emit(event: String, obj: Map<String, String>? = null) {
-        if (obj != null) {
-            val json = JSONObject()
+        val json = JSONObject()
 
-            json.put("uuid", MainActivity.uuid)
+        json.put("uuid", MainActivity.uuid)
+
+        if (obj != null) {
             for (element in obj) {
                 json.put(element.key, element.value)
             }
-
-            socket?.emit(event, json)
-        } else {
-            socket?.emit(event)
         }
+
+        socket?.emit(event, json)
     }
 
     fun on(event: String, func: (JSONObject) -> Unit) {
@@ -58,6 +56,7 @@ object NetworkManager {
     }
 
     private fun init() {
+        Log.d("init", "test")
         socket?.let {
             it.on(Socket.EVENT_CONNECT) {
                 emit(
@@ -67,33 +66,30 @@ object NetworkManager {
                         "target" to RoomActivity.target_uuid
                     )
                 )
+                Log.d("connect", "test")
             }
 
             it.on("room") { data ->
                 val json = JSONObject(data[0].toString())
 
-                FileManager.save("room.json", json.get("title").toString(), json.get("caption").toString())
-
                 map["room"]?.forEach {
                     it.invoke(json)
                 }
+                Log.d("Room", "test")
             }
 
             it.on(Socket.EVENT_MESSAGE) { data ->
                 val json = JSONObject(data[0].toString())
-                val params = JSONObject()
-                params.put("sender", json.get("sender").toString())
-                params.put("text", json.get("text").toString())
-
-                FileManager.save("message.json", json.get("room").toString(), params)
 
                 map[Socket.EVENT_MESSAGE]?.forEach {
                     it.invoke(json)
                 }
+
+                Log.d("Message", "test")
             }
 
             it.on(Socket.EVENT_DISCONNECT) {
-
+                Log.d("Disconnect", "test")
             }
 
             it.connect()
