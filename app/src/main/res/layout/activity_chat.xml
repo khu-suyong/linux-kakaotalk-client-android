@@ -51,7 +51,6 @@
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:padding="8dp"
-                android:text="Name"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/chat_send"
                 app:layout_constraintStart_toStartOf="parent"

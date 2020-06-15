@@ -23,6 +23,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        FileManager.init(this)
+
         val preference = PreferenceManager.getDefaultSharedPreferences(this)
         uuid = preference.getString("uuid", "") ?: ""
 
