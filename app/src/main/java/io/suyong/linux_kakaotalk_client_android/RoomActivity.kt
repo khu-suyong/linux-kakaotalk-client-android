@@ -46,6 +46,7 @@ class RoomActivity : AppCompatActivity() {
             try {
                 val json = JSONObject(FileManager.read("$target_uuid-rooms.json"))
                 Log.d("sync", "json $json")
+
                 json.keys().forEach {
                     adapter.list.add(Room("nothing", it.toString(), json.get(it.toString()).toString(), 0))
                     Log.d("sync", it.toString() + " " + json.get(it.toString()).toString())
@@ -57,7 +58,9 @@ class RoomActivity : AppCompatActivity() {
             }
         }
 
+        adapter.list.clear()
         NetworkManager.emit("room")
+
         NetworkManager.on("room") {
             val title = it.get("title").toString()
             val caption = it.get("caption").toString()
@@ -79,7 +82,7 @@ class RoomActivity : AppCompatActivity() {
                 val room = it.get("room").toString()
                 val text = it.get("text").toString()
 
-                adapter.list.forEachIndexed {i, r ->
+                adapter.list.forEachIndexed { i, r ->
                     if (r.title == room) {
                         adapter.list[i].caption = text
 

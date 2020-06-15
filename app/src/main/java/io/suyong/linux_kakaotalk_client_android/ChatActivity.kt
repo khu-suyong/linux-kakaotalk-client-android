@@ -68,9 +68,13 @@ class ChatActivity : AppCompatActivity() {
             chat_edit.setText("")
 
             adapter.notifyDataSetChanged()
+
+            chat_list.scrollToPosition(adapter.list.size)
         }
 
         adapter.notifyDataSetChanged()
+
+        chat_list.scrollToPosition(adapter.list.size)
 
         NetworkManager.on("message") {
             val sender = it.get("sender").toString()
@@ -79,8 +83,12 @@ class ChatActivity : AppCompatActivity() {
             val room = it.get("room").toString()
 
             runOnUiThread {
-                adapter.list.add(Message(sender, text, time))
-                adapter.notifyDataSetChanged()
+                if (room == ChatActivity.room) {
+                    adapter.list.add(Message(sender, text, time))
+                    adapter.notifyDataSetChanged()
+
+                    chat_list.scrollToPosition(adapter.list.size)
+                }
 
                 val params = JSONObject()
                 params.put("sender", sender)

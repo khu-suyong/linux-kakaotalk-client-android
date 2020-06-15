@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        NetworkManager.disconnect()
         main_connect.setOnClickListener {
             RoomActivity.target_uuid = textinput_bridge.text.toString()
             ChatActivity.sender = textinput_nickname.text.toString()
